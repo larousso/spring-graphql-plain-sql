@@ -1,0 +1,16 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: graphql
+  datasource:
+    url: jdbc:postgresql://localhost:5435/movies
+    username: movies
+    password: movies
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+logging:
+  level:
+    org.jooq.tools.LoggerListener: DEBUG

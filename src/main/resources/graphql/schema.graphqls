@@ -1,0 +1,57 @@
+type Query {
+    movies(name: String, type: TitleType, page: Int, size: Int): [Title]
+}
+
+scalar LocalDate
+scalar LocalDateTime
+scalar Year
+
+type Title {
+    id: ID
+    titleType: TitleType
+    primaryTitle: String
+    originalTitle: String
+    startYear: Year
+    endYear: Year
+    genres: [String]
+    distribution: [Role]
+    episodes: [Episode]
+}
+
+type Role {
+    id: ID
+    category: String
+    job: String
+    characters: [String]
+    episodes: [Episode]
+    person: Person
+}
+
+
+type Episode {
+    seasonNumber: Int
+    episodeNumber: Int
+    show: Title
+}
+
+type Person {
+    primaryName: String
+    birthYear: LocalDate
+    deathYear: LocalDate
+    primaryProfession: [String]
+    titles: [Title]
+}
+
+enum TitleType {
+    movie
+    short
+    tvEpisode
+    tvMiniSeries
+    tvMovie
+    tvPilot
+    tvSeries
+    tvShort
+    tvSpecial
+    video
+    videoGame
+}

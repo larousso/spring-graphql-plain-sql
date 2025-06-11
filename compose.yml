@@ -1,0 +1,12 @@
+services:
+  movies_postgres:
+    image: postgres:17
+    command: ["postgres", "-c", "log_min_duration_statement=1000", "-c", "log_destination=stderr", "-c", "log_statement=all"]
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./install_extensions.sh:/docker-entrypoint-initdb.d/install_extensions.sh
+      - ./imdb-datasets:/home/pg
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_PASSWORD: password
