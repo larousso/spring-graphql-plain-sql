@@ -7,6 +7,5 @@ public record Role(
         String category,
         String job,
         Person person,
-        List<String> characters,
-        List<Episode> episodes
+        List<String> characters
 ) { }

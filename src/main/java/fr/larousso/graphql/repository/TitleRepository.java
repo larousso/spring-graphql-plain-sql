@@ -7,11 +7,15 @@ import fr.larousso.graphql.model.TitleType;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.JSONB;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.list;
 
 @Component
 public class TitleRepository {
@@ -24,7 +28,53 @@ public class TitleRepository {
         this.dsl = dsl;
     }
 
-    public List<Title> movies(String name, TitleType type, Integer page, Integer size) {
+    public Map<String, List<Title>> titlesByPersons(List<String> ids) {
+        record PersonIdAndTitle(String id, Title title) {}
+        return this.dsl
+                .resultQuery("""
+                    select nb.nconst, row_to_json(tb)::jsonb
+                    from name_basics nb
+                    join title_principals tp on tp.nconst = nb.nconst
+                    join title_basics tb on tb.tconst = tp.tconst
+                    where nb.nconst in ({0})                      
+                    """,
+                    list(ids.stream().map(DSL::val).toList())
+                )
+                .stream().map(record -> {
+                    String id = record.get(0, String.class);
+                    Title title = fromJson(record.get(1, JSONB.class));
+                    return new PersonIdAndTitle(id, title);
+                })
+                .collect(Collectors.groupingBy((PersonIdAndTitle k) -> k.id))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().stream().map(personIdAndTitle -> personIdAndTitle.title()).toList()));
+    }
+
+    public Map<String, List<Title>> titlesKnowForByPersons(List<String> ids) {
+        record PersonIdAndTitle(String id, Title title) {}
+        return this.dsl
+                .resultQuery("""
+                        select nb.nconst, row_to_json(tb)::jsonb
+                        from name_basics nb
+                        cross join LATERAL UNNEST(nb."knownForTitles") known(tconst)
+                        join title_basics tb on tb.tconst = known.tconst
+                        where nb.nconst in ({0})                    
+                        """,
+                        list(ids.stream().map(DSL::val).toList())
+                )
+                .stream().map(record -> {
+                    String id = record.get(0, String.class);
+                    Title title = fromJson(record.get(1, JSONB.class));
+                    return new PersonIdAndTitle(id, title);
+                })
+                .collect(Collectors.groupingBy((PersonIdAndTitle k) -> k.id))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().stream().map(personIdAndTitle -> personIdAndTitle.title()).toList()));
+    }
+
+    public List<Title> titles(String name, TitleType type, Integer page, Integer size) {
         return this.dsl
                 .resultQuery("""
                     select 
@@ -46,15 +96,7 @@ public class TitleRepository {
                         size
                 )
                 .fetch(0, JSONB.class)
-                .stream().map(j ->
-                        {
-                            try {
-                                return mapper.readValue(j.data(), Title.class);
-                            } catch (JsonProcessingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                )
+                .stream().map(this::fromJson)
                 .toList();
     }
 
@@ -93,6 +135,14 @@ public class TitleRepository {
             return field("""
                     json_build_array()
                     """, JSONB.class);
+        }
+    }
+
+    Title fromJson(JSONB json) {
+        try {
+            return mapper.readValue(json.data(), Title.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

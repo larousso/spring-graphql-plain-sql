@@ -23,7 +23,6 @@ type Role {
     category: String
     job: String
     characters: [String]
-    episodes: [Episode]
     person: Person
 }
 
@@ -39,7 +38,8 @@ type Person {
     birthYear: LocalDate
     deathYear: LocalDate
     primaryProfession: [String]
-    titles: [Title]
+    titles(type: TitleType): [Title]
+    knownFor: [Title]
 }
 
 enum TitleType {

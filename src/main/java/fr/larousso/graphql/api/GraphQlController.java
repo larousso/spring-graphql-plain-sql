@@ -1,15 +1,18 @@
 package fr.larousso.graphql.api;
 
 
+import fr.larousso.graphql.model.*;
 import fr.larousso.graphql.repository.TitleRepository;
-import fr.larousso.graphql.model.Title;
-import fr.larousso.graphql.model.TitleType;
 import graphql.schema.DataFetchingEnvironment;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class GraphQlController {
@@ -26,11 +29,37 @@ public class GraphQlController {
                               @Argument Integer page,
                               @Argument Integer size,
                               DataFetchingEnvironment dataFetchingEnvironment) {
-        return titleRepository.movies(name, type, page, size);
+        return titleRepository.titles(name, type, page, size);
     }
 
-//    @SchemaMapping
-//    public JsonNode author(Book book) {
-//        return Author.getById(book.authorId());
-//    }
+
+    @BatchMapping
+    public Map<Person, List<Title>> titles(List<Person> personList) {
+        Map<String, List<Person>> personById = personList.stream().collect(Collectors.groupingBy(p -> p.nconst()));
+        return titleRepository.titlesByPersons(personList.stream().map(p -> p.nconst())
+                .collect(Collectors.toList()))
+                .entrySet().stream().collect(Collectors.toMap(
+                        entry -> personById.get(entry.getKey()).get(0),
+                        entry -> entry.getValue()
+                ));
+    }
+
+    @BatchMapping
+    public Map<Person, List<Title>> knownFor(List<Person> personList) {
+        Map<String, List<Person>> personById = personList.stream().collect(Collectors.groupingBy(p -> p.nconst()));
+        return titleRepository.titlesKnowForByPersons(personList.stream().map(p -> p.nconst())
+                .collect(Collectors.toList()))
+                .entrySet().stream().collect(Collectors.toMap(
+                        entry -> personById.get(entry.getKey()).get(0),
+                        entry -> entry.getValue()
+                ));
+    }
+
+    @SchemaMapping
+    public List<Title> titles(Person person, @Argument TitleType titleType) {
+        return person.titles()
+                .stream()
+                .filter(t -> t.titleType().equals(titleType))
+                .toList();
+    }
 }
