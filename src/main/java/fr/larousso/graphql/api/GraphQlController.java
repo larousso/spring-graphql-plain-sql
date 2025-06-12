@@ -55,11 +55,12 @@ public class GraphQlController {
                 ));
     }
 
-    @SchemaMapping
-    public List<Title> titles(Person person, @Argument TitleType titleType) {
-        return person.titles()
-                .stream()
-                .filter(t -> t.titleType().equals(titleType))
-                .toList();
-    }
+//    @SchemaMapping(typeName = "Person", field = "titles")
+//    public List<Title> titlesWithFilter(@Argument("type") TitleType type, DataFetchingEnvironment dataFetchingEnvironment) {
+//        Person person = dataFetchingEnvironment.getSource();
+//        return person.titles()
+//                .stream()
+//                .filter(t -> t.titleType().equals(type))
+//                .toList();
+//    }
 }
