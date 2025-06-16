@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-//@Controller
+@Controller
 public class GraphQlController3 {
 
     private final TitleRepository titleRepository;

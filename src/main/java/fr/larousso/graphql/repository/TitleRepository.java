@@ -40,7 +40,7 @@ public class TitleRepository {
                     from name_basics nb
                     join title_principals tp on tp.nconst = nb.nconst
                     join title_basics tb on tb.tconst = tp.tconst
-                    where nb.nconst in ({0})                      
+                    where nb.nconst in ({0})
                     """,
                     list(ids.stream().map(DSL::val).toList())
                 )
@@ -100,6 +100,7 @@ public class TitleRepository {
                 .stream().map(this::fromJson)
                 .toList();
     }
+
     public List<Title> titles(String name, TitleType type, Integer page, Integer size, boolean queryCast, boolean queryEpisode) {
         return this.dsl
                 .resultQuery("""
@@ -164,15 +165,6 @@ public class TitleRepository {
         }
     }
 
-
-    Title fromJson(JSONB json) {
-        try {
-            return mapper.readValue(json.data(), Title.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public List<Title> titlesByPersonsAndType(String nconst, TitleType type) {
         Condition condition = Objects.nonNull(type) ?
                 field("tb.\"titleType\"", String.class).eq(type.getName()) :
@@ -208,4 +200,14 @@ public class TitleRepository {
                 .stream().map(record -> fromJson(record.get(0, JSONB.class)))
                 .toList();
     }
+
+
+    Title fromJson(JSONB json) {
+        try {
+            return mapper.readValue(json.data(), Title.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
