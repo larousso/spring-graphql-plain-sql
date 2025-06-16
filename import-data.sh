@@ -51,6 +51,7 @@ PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "ALTER TAB
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "ALTER TABLE title_crew ADD PRIMARY KEY (tconst);"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "ALTER TABLE title_episode ADD PRIMARY KEY (const);"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_principals_tconst_idx on title_principals(tconst);"
+PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_principals_nconst_idx on title_principals(nconst);"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_akas_titleid_idx on title_akas(titleId);"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_episode_parent_tconst_idx on title_episode(\"parentTconst\");"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_basics_original_title_idx on title_basics(\"originalTitle\");"

@@ -10,6 +10,6 @@ public record Person(
         LocalDate deathYear,
         List<String> primaryProfession,
         List<Title> titles,
-        List<Title> titlesKnowFor
+        List<Title> knownFor
 ) {
 }

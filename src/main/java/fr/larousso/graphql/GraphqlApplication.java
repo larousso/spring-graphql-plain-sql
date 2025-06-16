@@ -1,6 +1,7 @@
 package fr.larousso.graphql;
 
 import fr.larousso.graphql.model.TitleType;
+import graphql.execution.instrumentation.tracing.TracingInstrumentation;
 import graphql.schema.idl.EnumValuesProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +19,13 @@ public class GraphqlApplication {
 	}
 
 	@Bean
+	TracingInstrumentation tracingInstrumentation() {
+		return new TracingInstrumentation();
+	}
+
+	@Bean
 	public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+
 		return wiringBuilder -> {
 			wiringBuilder
 					.type(newTypeWiring("TitleType", typeBuilder ->

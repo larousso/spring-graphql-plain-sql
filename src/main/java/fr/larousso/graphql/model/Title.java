@@ -11,7 +11,7 @@ public record Title(
         Year startYear,
         Year endYear,
         List<String> genres,
-        List<Role> distribution,
+        List<Role> cast,
         List<Episode> episodes
         ) {
 }

@@ -1,5 +1,5 @@
 type Query {
-    movies(name: String, type: TitleType, page: Int, size: Int): [Title]
+    titles(name: String, type: TitleType, page: Int, size: Int): [Title]
 }
 
 scalar LocalDate
@@ -14,7 +14,7 @@ type Title {
     startYear: Year
     endYear: Year
     genres: [String]
-    distribution: [Role]
+    cast: [Role]
     episodes: [Episode]
 }
 
