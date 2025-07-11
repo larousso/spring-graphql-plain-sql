@@ -26,7 +26,6 @@ type Role {
     person: Person
 }
 
-
 type Episode {
     seasonNumber: Int
     episodeNumber: Int

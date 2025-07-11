@@ -55,5 +55,6 @@ PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE IN
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_akas_titleid_idx on title_akas(titleId);"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_episode_parent_tconst_idx on title_episode(\"parentTconst\");"
 PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_basics_original_title_idx on title_basics(\"originalTitle\");"
+PGPASSWORD="movies" psql -h localhost -p 5435 -U movies -d movies  -c "CREATE INDEX title_basics_title_type_idx on title_basics(\"titleType\");"
 
 printf "Done! "
